@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE_HEIAM</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#070707;color:#fff;font-family:Arial}
+.top{height:4px;background:#f00;box-shadow:0 0 10px #f00}
+.header{background:#000;padding:14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #222}
+.header b{color:#f00;letter-spacing:3px;font-size:14px}
+.menuBtn{background:#1a1a1a;border:1px solid #333;color:#fff;padding:8px 14px;border-radius:8px;font-weight:bold}
+#sideMenu{position:fixed;top:0;left:-100%;width:80%;height:100%;background:#0a0a0a;border-right:2px solid #f00;z-index:999;transition:0.3s;padding:12px;overflow-y:auto}
+#sideMenu.open{left:0}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#000a;display:none;z-index:998}
+.overlay.show{display:block}
+.menuItem{background:#151515;border:1px solid #222;padding:15px;border-radius:10px;margin:7px 0;color:#888;font-weight:bold;font-size:12px;display:flex;justify-content:space-between}
+.menuItem.active{background:#f00;color:#fff;border-color:#f00;box-shadow:0 0 10px #f00}
+.container{padding:12px;padding-bottom:100px;display:none}
+.container.show{display:block}
+.label{font-size:10px;color:#f00;margin:14px 0 6px 2px;letter-spacing:1px;font-weight:bold}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opt{background:#161616;border:1px solid #222;padding:11px;border-radius:10px;font-size:11px;text-align:center;color:#999}
+.opt.active{background:#f00;color:#fff;font-weight:bold}
+.card{background:#101010;border:1px solid #222;border-radius:10px;padding:10px;margin-top:10px}
+.line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #161616}
+.badge{background:#f00;color:#fff;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:bold}
+.hud{background:#000;border:1px dashed #f00;border-radius:8px;padding:10px;margin:7px 0;display:flex;justify-content:space-between;align-items:center}
+.hud code{color:#0f8;font-size:10px;word-break:break-all;flex:1;margin-right:6px}
+.btnSmall{background:#f00;color:#fff;border:none;padding:7px 12px;border-radius:5px;font-size:10px;font-weight:bold}
+.btnGray{background:#222;color:#fff;border:1px solid #333;padding:7px 10px;border-radius:5px;font-size:10px;margin-left:4px}
+.inp{width:100%;background:#111;border:1px solid #333;color:#fff;padding:14px;border-radius:10px;margin:5px 0}
+.btnBig{width:100%;background:#f00;color:#fff;border:none;padding:14px;border-radius:10px;font-weight:bold;margin-top:8px}
+.nameBox{background:#111;border-left:4px solid #f00;border-radius:8px;padding:12px;margin:8px 0;text-align:center;font-size:14px;word-break:break-all;white-space:pre-wrap}
+.cat{font-size:10px;color:#f00;margin:12px 0 4px 0;font-weight:bold}
+.previewBox{background:#000;border:2px solid #222;border-radius:12px;height:200px;display:flex;align-items:center;justify-content:center;margin-top:10px}
+#lab{width:100%;height:230px;background:#000;border:1px solid #f00;border-radius:8px;position:relative;overflow:hidden}
+.dot{width:26px;height:26px;background:#f00;border-radius:50%;position:absolute;box-shadow:0 0 10px #f00}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#f00;color:#fff;padding:12px 22px;border-radius:30px;font-weight:bold;font-size:12px;z-index:9999;transition:0.3s;opacity:0}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.searchBox{background:#111;border:1px solid #f00;border-radius:10px;padding:12px;color:#fff;width:100%;margin-bottom:8px}
+.colorRow{display:flex;align-items:center;gap:10px;padding:10px;background:#111;border-radius:8px;margin:5px 0}
+.colorDot{width:22px;height:22px;border-radius:4px;border:1px solid #333}
+</style>
+</head>
+<body>
+<div class="top"></div>
+<div class="header"><b>THE_HEIAM</b><button class="menuBtn" onclick="toggleMenu()">☰ MENU</button></div>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div id="sideMenu"><div style="padding:10px;color:#f00;font-weight:bold;border-bottom:1px solid #222;margin-bottom:10px;letter-spacing:2px">THE_HEIAM MENU</div><div id="menuList"></div></div>
+<div id="toast">Copiado ✓</div>
+
+<div class="container show" id="c-sensi"><div class="label">SENSI - ELIGE GAMA</div><div class="grid" id="gamas"></div><div class="card" id="result"></div><button class="btnBig" style="background:#111;border:1px solid #f00;color:#f00" onclick="shareSensi()">📤 COMPARTIR MI SENSI</button></div>
+
+<div class="container" id="c-hud">
+<div class="label">300+ HUDS - BUSCA LGAN</div>
+<input class="searchBox" id="hudSearch" placeholder="🔍 Escribe: LGAN, 4 dedos, tablet..." oninput="filterHuds()">
+<div style="display:flex;gap:4px;overflow-x:auto;margin-bottom:8px">
+<button class="btnSmall" style="background:#222" onclick="setSearch('')">TODO</button>
+<button class="btnSmall" style="background:#f00" onclick="setSearch('LGAN')">LGAN</button>
+<button class="btnSmall" style="background:#222" onclick="setSearch('2 DEDOS')">2D</button>
+<button class="btnSmall" style="background:#222" onclick="setSearch('3 DEDOS')">3D</button>
+<button class="btnSmall" style="background:#222" onclick="setSearch('4 DEDOS')">4D</button>
+<button class="btnSmall" style="background:#222" onclick="setSearch('5 DEDOS')">5D</button>
+</div>
+<div id="hudCount" style="font-size:10px;color:#666;margin-bottom:6px"></div>
+<div id="hudList"></div>
+</div>
+
+<div class="container" id="c-nombres"><div class="label">NOMBRES SIN EMOJIS</div><input class="inp" id="nameInput" placeholder="Tu nombre"><button class="btnBig" onclick="genNames()">GENERAR NOMBRES</button><div id="names"></div></div>
+<div class="container" id="c-bio"><div class="label">BIOS CON COLORES - COMO TU CAPTURA</div><input class="inp" id="bioUser" value="TU USER" oninput="genBios()"><div id="bioList"></div></div>
+<div class="container" id="c-banderas"><div class="label">BANDERAS - 10 PAISES</div><div class="grid" id="flagBtns"></div><input class="inp" id="flagUser" value="TU USER" oninput="genBanderas()"><div id="banderasOut"></div></div>
+<div class="container" id="c-simbolos"><div class="label">SÍMBOLOS QUE DEJA FREE</div><div class="grid" id="simbolosGrid"></div><div class="card" id="simPreview" style="font-size:22px;text-align:center;min-height:50px">Toca un símbolo</div></div>
+<div class="container" id="c-colores"><div class="label">CÓDIGOS DE COLORES</div><div id="coloresList"></div></div>
+<div class="container" id="c-clan"><div class="label">CLAN TAG</div><input class="inp" id="inClan" placeholder="Nombre clan"><button class="btnBig" onclick="genClan()">GENERAR TAG</button><div id="outClan"></div></div>
+<div class="container" id="c-boton"><div class="label">VISOR BOTON</div><input type="range" id="btnRange" min="30" max="80" value="50" style="width:100%" oninput="updateBtn()"><div class="previewBox"><div id="btnPreview" style="width:50%;height:50%;border:2px solid #f00;border-radius:50%;display:flex;align-items:center;justify-content:center">FUEGO</div></div><div class="card" style="text-align:center">Tamaño: <b id="btnVal">50%</b></div></div>
+<div class="container" id="c-dpi"><div class="label">DPI CALC</div><select id="dpiSel" class="inp"><option>GAMA BAJA - 640 DPI</option><option>GAMA MEDIA - 720 DPI</option><option>GAMA ALTA - 850 DPI</option></select><button class="btnBig" onclick="calcDpi()">CALCULAR DPI</button><div id="outDpi"></div></div>
+<div class="container" id="c-lab"><div class="label">SENSI LAB</div><div id="lab"><div class="dot" id="dot" style="left:50%;top:50%"></div></div><div class="card" style="display:flex;justify-content:space-between"><span>Puntos: <b id="pts">0</b></span><span>Prec: <b id="acc">100%</b></span></div><button class="btnBig" onclick="startLab()">INICIAR TEST 15S</button></div>
+
+<script>
+function toast(m){var t=document.getElementById("toast");t.innerText=m+" ✓";t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1500);}
+function copyText(t){navigator.clipboard.writeText(t);toast("Copiado");}
+function setSearch(v){document.getElementById("hudSearch").value=v;filterHuds();}
+var tabs=[{id:"sensi",name:"SENSI TODO ROJO"},{id:"hud",name:"300 HUDS + LGAN"},{id:"nombres",name:"NOMBRES"},{id:"bio",name:"BIOS"},{id:"banderas",name:"BANDERAS"},{id:"simbolos",name:"SÍMBOLOS"},{id:"colores",name:"COLORES"},{id:"clan",name:"CLAN TAG"},{id:"boton",name:"VISOR BOTON"},{id:"dpi",name:"DPI CALC"},{id:"lab",name:"SENSI LAB"}];
+var current="sensi";
+function buildMenu(){document.getElementById("menuList").innerHTML=tabs.map(t=>`<div class="menuItem ${t.id==current?'active':''}" onclick="goTo('${t.id}')">${t.name}<span>></span></div>`).join("");}
+function toggleMenu(){document.getElementById("sideMenu").classList.toggle("open");document.getElementById("overlay").classList.toggle("show");}
+function goTo(id){current=id;document.querySelectorAll(".container").forEach(c=>c.classList.remove("show"));document.getElementById("c-"+id).classList.add("show");buildMenu();if(document.getElementById("sideMenu").classList.contains("open")) toggleMenu();}
+
+var gamasData=[{id:"TODO",name:"TODO ROJO",desc:"185-190-175",vals:[185,190,175,160,105,170],dpi:750},{id:"BAJA",name:"GAMA BAJA",desc:"A05 A12 9A",vals:[188,190,180,165,110,85],dpi:640},{id:"MEDIA",name:"GAMA MEDIA",desc:"Note 11/12",vals:[170,175,160,145,95,75],dpi:720},{id:"ALTA",name:"GAMA ALTA",desc:"S23 iPhone",vals:[90,88,75,70,50,65],dpi:850}];
+var gamaSel="TODO";
+function renderGamas(){var h="";for(var i=0;i<gamasData.length;i++){var g=gamasData[i];var act=g.id==gamaSel?"active":"";h+=`<div class="opt ${act}" onclick="setGama('${g.id}')"><b>${g.name}</b><br><small>${g.desc}</small></div>`;}document.getElementById("gamas").innerHTML=h;renderResult();}
+function setGama(id){gamaSel=id;renderGamas();}
+function renderResult(){var g=gamasData.find(x=>x.id==gamaSel);var tit=["General","Rojo","2X","4X","AWM","Libre"];var h="";for(var i=0;i<tit.length;i++){h+=`<div class="line"><span>${tit[i]}</span><div class="badge">${g.vals[i]}</div></div>`;}h+=`<div class="line"><span>DPI</span><div class="badge">${g.dpi}</div></div>`;document.getElementById("result").innerHTML=h;}
+function shareSensi(){var g=gamasData.find(x=>x.id==gamaSel);var txt=`🔥 MI SENSI THE_HEIAM 🔥\n${g.name} General:${g.vals[0]} Rojo:${g.vals[1]}`;copyText(txt);}
+
+// 300 HUDS + LGAN REAL
+var allHuds=[];
+var realLgan=["#FFHUDLGAN01x9j2kPo7eM - LGAN 4 DEDOS PRINCIPAL","#FFHUDLGAN02a8bPo7eM - LGAN 4 DEDOS CLAW PRO","#FFHUDLGAN03c7dPo7eM - LGAN 4 DEDOS COMPETITIVO 2026","#FFHUDLGAN04e6fPo7eM - LGAN 4 DEDOS SIN BOTON","#FFHUDLGAN05g5hPo7eL - LGAN 3 DEDOS TODO ROJO","#FFHUDLGAN06i4jPo7eW - LGAN 5 DEDOS PC","#FFHUDLGAN07k3lPo7eL - LGAN 3 DEDOS NUEVO","#FFHUDLGAN08m2nPo7eM - LGAN 4 DEDOS IPAD PRO"];
+realLgan.forEach(c=>allHuds.push(c));
+var baseNames=["THE_HEIAM","Donato","SadX","WhiteFF","Jean King","Mr Stiven","Rush","Insano","Heroico","Tablet","PC","Emulador"];
+for(var i=0;i<292;i++){
+ var name=baseNames[i%baseNames.length];
+ var dedos=["2 DEDOS","3 DEDOS","4 DEDOS","5 DEDOS"][i%4];
+ var code="#FFHUDT6O3j"+Math.random().toString(36).substr(2,6)+"Po7e"+String.fromCharCode(65+(i%26));
+ allHuds.push(code+" - "+name+" "+dedos+" TODO ROJO #"+(i+1));
+}
+function filterHuds(){
+ var q=document.getElementById("hudSearch").value.toLowerCase();
+ var list=q==""?allHuds:allHuds.filter(h=>h.toLowerCase().includes(q));
+ document.getElementById("hudCount").innerText=list.length+" HUDS";
+ var html="";var lim=list.length>60?60:list.length;
+ for(var i=0;i<lim;i++){var c=list[i];var co=c.split(' ')[0];html+=`<div class="hud"><code>${c}</code><button class="btnSmall" onclick="copyText('${co}')">COPIAR</button></div>`;}
+ document.getElementById("hudList").innerHTML=html;
+}
+
+function genNames(){var b=document.getElementById("nameInput").value||"TU USER";var e=[`꧁༒☬${b}☬༒꧂`,`★彡[${b}]彡★`,`『${b}』`,`亗•${b}•亗`,`×͜× ${b} ×͜×`,`༺${b}༻`,`◥꧁${b}꧂◤`,`꧁ঔৣ☬✞${b}✞☬ঔৣ꧂`,`乂${b}乂`,`☬${b}☬`];var h="";for(var i=0;i<e.length;i++){h+=`<div class="nameBox">${e[i]}<button class="btnSmall" style="width:100%;margin-top:6px;padding:10px" onclick="copyText('${e[i]}')">COPIAR</button></div>`;}document.getElementById("names").innerHTML=h;}
+function genBios(){
+ var u=document.getElementById("bioUser").value||"TU USER";
+ var l=[`[b][c]FREE F[FF9000]I[FFFFFF]RE x[FF69B4]${u}`,`[b][c][00FFFF]╭─╮\n︱ ꚠ ︱ɪɴsᴛᴀ: ${u}\n╰─╯`,`[b][c][FF00FF]Ⓘⓝⓢⓣⓐ: @${u}`,`[B][C][00FFFF]ꚠ TIKTOK: @${u}`,`[b][c][FF0000]► YOUTUBE: ${u}`,`[c][FFFF00]TODO ROJO [FF0000]${u} 99% HS`,`[b][c][FF0000]${u} [FFFF00]99% HS`];
+ var h="";for(var i=0;i<l.length;i++){h+=`<div class="nameBox">${l[i]}<button class="btnSmall" style="width:100%;margin-top:8px;padding:10px" onclick="copyText(\`${l[i]}\`)">COPIAR</button></div>`;}document.getElementById("bioList").innerHTML=h;
+}
+var flags=[{n:"COLOMBIA",c:"[FFFF00]█[0000FF]█[FF0000]█"},{n:"MEXICO",c:"[00FF00]█[FFFFFF]█[FF0000]█"},{n:"ARGENTINA",c:"[00AAFF]█[FFFFFF]█[00AAFF]█"},{n:"PERU",c:"[FF0000]█[FFFFFF]█[FF0000]█"},{n:"BRASIL",c:"[00FF00]█[FFFF00]█[0000FF]█"},{n:"ESPAÑA",c:"[FF0000]█[FFFF00]█[FF0000]█"},{n:"CHILE",c:"[FFFFFF]█[FF0000]█[0000FF]★"},{n:"VENEZUELA",c:"[FFFF00]█[0000FF]█[FF0000]█"}];
+var selFlag=flags[0].c;
+function renderFlagBtns(){var h="";for(var i=0;i<flags.length;i++){h+=`<div class="opt" onclick="selFlag='${flags[i].c}';genBanderas()">${flags[i].n}</div>`;}document.getElementById("flagBtns").innerHTML=h;}
+function genBanderas(){var u=document.getElementById("flagUser").value||"TU USER";var o=[`${selFlag}`,`${selFlag} ${u}`,`[b][c]${selFlag} ${u}`];var h="";for(var i=0;i<o.length;i++){h+=`<div class="nameBox">${o[i]}<button class="btnSmall" style="width:100%;margin-top:6px;padding:10px" onclick="copyText('${o[i]}')">COPIAR</button></div>`;}document.getElementById("banderasOut").innerHTML=h;}
+function genClan(){var b=document.getElementById("inClan").value||"TU USER";var t=[`꧁༒☬${b}☬༒꧂`,`『${b}』`,`★ ${b} ★`,`亗 ${b} 亗`];var h="";for(var i=0;i<t.length;i++){h+=`<div class="nameBox">${t[i]}<button class="btnSmall" style="width:100%;margin-top:6px;padding:10px" onclick="copyText('${t[i]}')">COPIAR</button></div>`;}document.getElementById("outClan").innerHTML=h;}
+function updateBtn(){var v=document.getElementById("btnRange").value;document.getElementById("btnVal").innerText=v+"%";document.getElementById("btnPreview").style.width=v+"%";document.getElementById("btnPreview").style.height=v+"%";}
+function calcDpi(){var m=document.getElementById("dpiSel").value;document.getElementById("outDpi").innerHTML=`<div class="nameBox"><b>${m}</b></div>`;}
+var simbolos=["꧁","꧂","༒","☬","亗","★","彡","『","』","乂","×͜×","◥","◤","ঔৣ","✞"];
+function renderSimbolos(){var h="";for(var i=0;i<simbolos.length;i++){h+=`<div class="opt" onclick="document.getElementById('simPreview').innerText+='${simbolos[i]}';copyText('${simbolos[i]}')">${simbolos[i]}</div>`;}document.getElementById("simbolosGrid").innerHTML=h;}
+var colores=[{code:"[FF0000]",name:"Rojo",hex:"#f00"},{code:"[FFFF00]",name:"Amarillo",hex:"#ff0"},{code:"[00FF00]",name:"Verde",hex:"#0f0"},{code:"[0000FF]",name:"Azul",hex:"#00f"},{code:"[FF00FF]",name:"Rosa",hex:"#f0f"},{code:"[00FFFF]",name:"Celeste",hex:"#0ff"},{code:"[FFFFFF]",name:"Blanco",hex:"#fff"},{code:"[FF9000]",name:"Naranja",hex:"#f90"},{code:"[FF69B4]",name:"Rosa Claro",hex:"#ff69b4"}];
+function renderColores(){var h="";for(var i=0;i<colores.length;i++){var c=colores[i];h+=`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:#111;border-radius:8px;margin:5px 0"><div style="width:22px;height:22px;background:${c.hex};border-radius:4px"></div><div style="flex:1"><b>${c.name}</b><br><small>${c.code}</small></div><button class="btnSmall" onclick="copyText('${c.code}')">COPIAR</button></div>`;}document.getElementById("coloresList").innerHTML=h;}
+var pts=0,hits=0,total=0,interval;function startLab(){pts=0;hits=0;total=0;document.getElementById("pts").innerText="0";interval=setInterval(moveDot,800);setTimeout(()=>{clearInterval(interval);toast("Puntos: "+pts)},15000);}function moveDot(){var lab=document.getElementById("lab");var dot=document.getElementById("dot");var x=Math.random()*(lab.clientWidth-26);var y=Math.random()*(lab.clientHeight-26);dot.style.left=x+"px";dot.style.top=y+"px";}
+document.getElementById("lab").addEventListener("click",function(e){if(!interval) return;var dot=document.getElementById("dot");var rect=this.getBoundingClientRect();var mx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;var my=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;total++;if(Math.abs(mx-parseInt(dot.style.left))<30 && Math.abs(my-parseInt(dot.style.top))<30){pts++;hits++;}document.getElementById("pts").innerText=pts;document.getElementById("acc").innerText=Math.round((hits/total)*100)+"%";moveDot();});
+
+window.onload=function(){renderGamas();filterHuds();buildMenu();genBios();renderFlagBtns();genBanderas();renderSimbolos();renderColores();}
+</script>
+</body>
+</html>
